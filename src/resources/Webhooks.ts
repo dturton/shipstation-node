@@ -42,4 +42,13 @@ export class Webhooks extends BaseResource<IWebhook> {
 
     return null
   }
+
+  public async getPayloadUrl(url: string): Promise<any> {
+    const response = await this.shipstation.request({
+      url,
+      method: RequestMethod.GET,
+      useBaseUrl: false
+    })
+    return response.data
+  }
 }
