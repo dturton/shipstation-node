@@ -2,7 +2,8 @@ import {
   ISubscribeToWebhookOpts,
   ISubscriptionResponse,
   IWebhook,
-  IWebhookPaginationResult
+  IWebhookPaginationResult,
+  IOrderPaginationResult
 } from '../models'
 import Shipstation, { RequestMethod } from '../shipstation'
 import { BaseResource } from './Base'
@@ -43,12 +44,34 @@ export class Webhooks extends BaseResource<IWebhook> {
     return null
   }
 
-  public async getPayloadUrl(url: string): Promise<any> {
+  private async getPagedPayloadByUrl(
+    url: string,
+    page: number = 1
+  ): Promise<IOrderPaginationResult> {
     const response = await this.shipstation.request({
-      url,
+      url: `${url}&page=${page}`,
       method: RequestMethod.GET,
-      useBaseUrl: false
+      useBaseUrl: false //use custom url
     })
-    return response.data
+    return response.data as IOrderPaginationResult
+  }
+
+  public async getPayloadByUrl(url: string): Promise<IOrderPaginationResult> {
+    let r = 1
+    let firstRequest: IOrderPaginationResult = await this.getPagedPayloadByUrl(
+      url,
+      r
+    )
+
+    while (r < firstRequest.pages) {
+      r++
+      let newRequest: IOrderPaginationResult = await this.getPagedPayloadByUrl(
+        url,
+        r
+      )
+
+      firstRequest.orders = firstRequest.orders.concat(newRequest.orders)
+    }
+    return firstRequest as IOrderPaginationResult
   }
 }

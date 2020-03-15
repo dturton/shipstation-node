@@ -1,11 +1,11 @@
-import { IAddress } from "./Address";
-import { IAdvancedOptions } from "./AdvancedOptions";
-import { IDimensions } from "./Dimensions";
-import { IInsuranceOptions } from "./InsuranceOptions";
-import { IInternationalOptions } from "./InternationalOptions";
-import { IPaginatedResult } from "./Pagination";
-import { IWeight } from "./Weight";
-export declare type OrderStatus = "awaiting_payment" | "awaiting_shipment" | "shipped" | "on_hold" | "cancelled";
+import { IAddress } from './Address';
+import { IAdvancedOptions } from './AdvancedOptions';
+import { IDimensions } from './Dimensions';
+import { IInsuranceOptions } from './InsuranceOptions';
+import { IInternationalOptions } from './InternationalOptions';
+import { IPaginatedResult } from './Pagination';
+import { IWeight } from './Weight';
+export declare type OrderStatus = 'awaiting_payment' | 'awaiting_shipment' | 'shipped' | 'on_hold' | 'cancelled';
 export interface IOrder {
     orderId: number;
     orderNumber: string;
@@ -60,7 +60,7 @@ export interface ICreateOrUpdateOrder {
     customerEmail?: string;
     billTo: IAddress;
     shipTo: IAddress;
-    items?: Array<Omit<IOrderItem, "orderItemId" | "createDate" | "modifyDate">>;
+    items?: Array<Omit<IOrderItem, 'orderItemId' | 'createDate' | 'modifyDate'>>;
     amountPaid?: number;
     taxAmount?: number;
     shippingAmount?: number;
@@ -119,5 +119,17 @@ interface IBulkCreateOrUpdateOrderResponse {
 export interface ICreateOrUpdateOrderBulkResponse {
     results: IBulkCreateOrUpdateOrderResponse[];
     hasErrors: boolean;
+}
+export interface IMarkAsShipped {
+    orderId: string;
+    carrierCode?: string;
+    shipDate?: string;
+    trackingNumber?: string;
+    notifyCustomer?: boolean;
+    notifySalesChannel?: boolean;
+}
+export interface IMarkAsShippedResponse {
+    orderId: number;
+    orderNumnber: string;
 }
 export {};

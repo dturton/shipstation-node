@@ -2,7 +2,9 @@ import {
   ICreateOrUpdateOrder,
   ICreateOrUpdateOrderBulkResponse,
   IOrder,
-  IOrderPaginationResult
+  IOrderPaginationResult,
+  IMarkAsShipped,
+  IMarkAsShippedResponse
 } from '../models'
 import Shipstation, { RequestMethod } from '../shipstation'
 import { BaseResource } from './Base'
@@ -42,5 +44,17 @@ export class Orders extends BaseResource<IOrder> {
     })
 
     return response.data as ICreateOrUpdateOrderBulkResponse
+  }
+
+  public async markAsShipped(
+    data: IMarkAsShipped
+  ): Promise<IMarkAsShippedResponse> {
+    const url = `${this.baseUrl}/markasshipped`
+    const response = await this.shipstation.request({
+      url,
+      method: RequestMethod.POST,
+      data
+    })
+    return response.data as IMarkAsShippedResponse
   }
 }

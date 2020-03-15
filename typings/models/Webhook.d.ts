@@ -1,5 +1,5 @@
-import { IPaginatedResult } from "./Pagination";
-export declare type WebhookEventType = "ORDER_NOTIFY" | "ITEM_ORDER_NOTIFY" | "SHIP_NOTIFY" | "ITEM_SHIP_NOTIFY";
+import { IPaginatedResult } from './Pagination';
+export declare type WebhookEventType = 'ORDER_NOTIFY' | 'ITEM_ORDER_NOTIFY' | 'SHIP_NOTIFY' | 'ITEM_SHIP_NOTIFY';
 export interface IWebhook {
     resource_url: string;
     resource_type: WebhookEventType;

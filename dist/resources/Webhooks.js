@@ -13,11 +13,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -109,6 +108,48 @@ var Webhooks = (function (_super) {
                     case 1:
                         _a.sent();
                         return [2, null];
+                }
+            });
+        });
+    };
+    Webhooks.prototype.getPagedPayloadByUrl = function (url, page) {
+        if (page === void 0) { page = 1; }
+        return __awaiter(this, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.shipstation.request({
+                            url: url + "&page=" + page,
+                            method: shipstation_1.RequestMethod.GET,
+                            useBaseUrl: false
+                        })];
+                    case 1:
+                        response = _a.sent();
+                        return [2, response.data];
+                }
+            });
+        });
+    };
+    Webhooks.prototype.getPayloadByUrl = function (url) {
+        return __awaiter(this, void 0, void 0, function () {
+            var r, firstRequest, newRequest;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        r = 1;
+                        return [4, this.getPagedPayloadByUrl(url, r)];
+                    case 1:
+                        firstRequest = _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        if (!(r < firstRequest.pages)) return [3, 4];
+                        r++;
+                        return [4, this.getPagedPayloadByUrl(url, r)];
+                    case 3:
+                        newRequest = _a.sent();
+                        firstRequest.orders = firstRequest.orders.concat(newRequest.orders);
+                        return [3, 2];
+                    case 4: return [2, firstRequest];
                 }
             });
         });

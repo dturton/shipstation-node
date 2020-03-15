@@ -1,4 +1,4 @@
-import { ICreateOrUpdateOrder, ICreateOrUpdateOrderBulkResponse, IOrder, IOrderPaginationResult } from '../models';
+import { ICreateOrUpdateOrder, ICreateOrUpdateOrderBulkResponse, IOrder, IOrderPaginationResult, IMarkAsShipped, IMarkAsShippedResponse } from '../models';
 import Shipstation from '../shipstation';
 import { BaseResource } from './Base';
 export declare class Orders extends BaseResource<IOrder> {
@@ -7,4 +7,5 @@ export declare class Orders extends BaseResource<IOrder> {
     getAll(): Promise<IOrderPaginationResult>;
     createOrUpdate(data: ICreateOrUpdateOrder): Promise<IOrder>;
     createOrUpdateBulk(data: ICreateOrUpdateOrder[]): Promise<ICreateOrUpdateOrderBulkResponse>;
+    markAsShipped(data: IMarkAsShipped): Promise<IMarkAsShippedResponse>;
 }
