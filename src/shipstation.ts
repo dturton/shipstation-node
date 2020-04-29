@@ -7,13 +7,13 @@ const stopcock = require('stopcock')
 
 const rateLimitOpts = {
   limit: 40,
-  interval: 1000 * 40
+  interval: 1000 * 40,
 }
 
 export enum RequestMethod {
   GET = 'GET',
   POST = 'POST',
-  DELETE = 'DELETE'
+  DELETE = 'DELETE',
 }
 
 export interface IShipstationRequestOptions {
@@ -23,21 +23,31 @@ export interface IShipstationRequestOptions {
   data?: any
 }
 
+export interface IShipstationAuthorization {
+  apiKey: string
+  apiSecret: string
+}
+
 export default class Shipstation {
   public authorizationToken: string
   private baseUrl: string = 'https://ssapi.shipstation.com/'
+  private apiKey: string
+  private apiSecret: string
 
-  constructor() {
-    if (!process.env.SS_API_KEY || !process.env.SS_API_SECRET) {
+  constructor(auth: IShipstationAuthorization) {
+    this.apiKey = process.env.SS_API_KEY ? process.env.SS_API_KEY : auth.apiKey
+    this.apiSecret = process.env.SS_API_SECRET
+      ? process.env.SS_API_SECRET
+      : auth.apiSecret
+
+    if (!this.apiKey || !this.apiSecret) {
       // tslint:disable-next-line:no-console
       throw new Error(
-        `APIKey and API Secret are required! Provided API Key: ${process.env.SS_API_KEY} API Secret: ${process.env.SS_API_SECRET}`
+        `APIKey and API Secret are required! Provided API Key: ${this.apiKey} API Secret: ${this.apiSecret}`
       )
     }
 
-    this.authorizationToken = base64.encode(
-      `${process.env.SS_API_KEY}:${process.env.SS_API_SECRET}`
-    )
+    this.authorizationToken = base64.encode(`${this.apiKey}:${this.apiSecret}`)
 
     // Globally define API ratelimiting
     this.request = stopcock(this.request, rateLimitOpts)
@@ -47,14 +57,14 @@ export default class Shipstation {
     url,
     method,
     useBaseUrl = true,
-    data
+    data,
   }: IShipstationRequestOptions) => {
     const opts: AxiosRequestConfig = {
       headers: {
-        Authorization: `Basic ${this.authorizationToken}`
+        Authorization: `Basic ${this.authorizationToken}`,
       },
       method,
-      url: `${useBaseUrl ? this.baseUrl : ''}${url}`
+      url: `${useBaseUrl ? this.baseUrl : ''}${url}`,
     }
 
     if (data) {

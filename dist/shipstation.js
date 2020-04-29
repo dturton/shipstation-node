@@ -8,7 +8,7 @@ var base64 = require('base-64');
 var stopcock = require('stopcock');
 var rateLimitOpts = {
     limit: 40,
-    interval: 1000 * 40
+    interval: 1000 * 40,
 };
 var RequestMethod;
 (function (RequestMethod) {
@@ -17,27 +17,31 @@ var RequestMethod;
     RequestMethod["DELETE"] = "DELETE";
 })(RequestMethod = exports.RequestMethod || (exports.RequestMethod = {}));
 var Shipstation = (function () {
-    function Shipstation() {
+    function Shipstation(auth) {
         var _this = this;
         this.baseUrl = 'https://ssapi.shipstation.com/';
         this.request = function (_a) {
             var url = _a.url, method = _a.method, _b = _a.useBaseUrl, useBaseUrl = _b === void 0 ? true : _b, data = _a.data;
             var opts = {
                 headers: {
-                    Authorization: "Basic " + _this.authorizationToken
+                    Authorization: "Basic " + _this.authorizationToken,
                 },
                 method: method,
-                url: "" + (useBaseUrl ? _this.baseUrl : '') + url
+                url: "" + (useBaseUrl ? _this.baseUrl : '') + url,
             };
             if (data) {
                 opts.data = data;
             }
             return axios_1.default.request(opts);
         };
-        if (!process.env.SS_API_KEY || !process.env.SS_API_SECRET) {
-            throw new Error("APIKey and API Secret are required! Provided API Key: " + process.env.SS_API_KEY + " API Secret: " + process.env.SS_API_SECRET);
+        this.apiKey = process.env.SS_API_KEY ? process.env.SS_API_KEY : auth.apiKey;
+        this.apiSecret = process.env.SS_API_SECRET
+            ? process.env.SS_API_SECRET
+            : auth.apiSecret;
+        if (!this.apiKey || !this.apiSecret) {
+            throw new Error("APIKey and API Secret are required! Provided API Key: " + this.apiKey + " API Secret: " + this.apiSecret);
         }
-        this.authorizationToken = base64.encode(process.env.SS_API_KEY + ":" + process.env.SS_API_SECRET);
+        this.authorizationToken = base64.encode(this.apiKey + ":" + this.apiSecret);
         this.request = stopcock(this.request, rateLimitOpts);
     }
     return Shipstation;

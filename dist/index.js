@@ -20,8 +20,8 @@ var Stores_1 = require("./resources/Stores");
 var Webhooks_1 = require("./resources/Webhooks");
 var shipstation_1 = __importDefault(require("./shipstation"));
 var ShipStationAPI = (function () {
-    function ShipStationAPI() {
-        this.ss = new shipstation_1.default();
+    function ShipStationAPI(auth) {
+        this.ss = new shipstation_1.default(auth);
         this.orders = new Orders_1.Orders(this.ss);
         this.carriers = new Carriers_1.Carriers(this.ss);
         this.fulfillments = new Fulfillments_1.Fulfillments(this.ss);
